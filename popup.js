@@ -4,20 +4,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveKeyBtn = document.getElementById("save-key-btn");
     const keyStatus = document.getElementById("key-status");
 
+    const initialKeySection = document.getElementById("initial-key-section");
+    const savedKeySection = document.getElementById("saved-key-section");
+    const changeKeyBtn = document.getElementById("change-key-btn");
+    const clearAllBtn = document.getElementById("clear-all-btn");
+
+    function updateKeyUI(hasKey) {
+        if (hasKey) {
+            initialKeySection.style.display = "none";
+            savedKeySection.style.display = "flex";
+        } else {
+            initialKeySection.style.display = "flex";
+            savedKeySection.style.display = "none";
+        }
+    }
+
     // Load API key from local storage when popup opens
     chrome.storage.local.get(["openaiApiKey"], (result) => {
         if (result.openaiApiKey) {
             apiKeyInput.value = result.openaiApiKey;
+            updateKeyUI(true);
+        } else {
+            updateKeyUI(false);
         }
     });
 
     // Save API key
     saveKeyBtn.addEventListener("click", () => {
         const key = apiKeyInput.value.trim();
+        if(!key) return; // ignore empty saves
         chrome.storage.local.set({ openaiApiKey: key }, () => {
             keyStatus.style.display = "inline";
-            setTimeout(() => { keyStatus.style.display = "none"; }, 2000);
+            setTimeout(() => { 
+                keyStatus.style.display = "none"; 
+                updateKeyUI(true);
+            }, 800);
         });
+    });
+
+    // Change API Key
+    changeKeyBtn.addEventListener("click", () => {
+        updateKeyUI(false);
+        apiKeyInput.focus();
+    });
+
+    // Clear All Highlights
+    clearAllBtn.addEventListener("click", () => {
+        if(confirm("Are you sure you want to delete all saved highlights?")) {
+            chrome.storage.local.set({ highlights: [] }, () => {
+                renderHighlights();
+            });
+        }
     });
 
     // Helper function to escape HTML to prevent XSS attacks when displaying saved text

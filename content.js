@@ -218,16 +218,7 @@ function handleSave() {
         console.log("Overlay logic notified Service Worker storage complete:", response);
     });
 
-    // Directly alter DOM visually to represent saved state
-    const span = document.createElement("span");
-    span.style.backgroundColor = "yellow";
-    span.style.color = "black";
-    
-    try {
-        currentRange.surroundContents(span);
-    } catch (e) {
-        console.warn("Could not wrap completely, complex selection.", e);
-    }
+
 
     // Tear down
     hideOverlay();

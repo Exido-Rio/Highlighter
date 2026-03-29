@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Highlighter & Summarizer",
+  "name": "Highlighter",
   "version": "1.0",
   "description": "Highlight text on any webpage, save it locally, and summarize it using the OpenAI API.",
   "permissions": [
