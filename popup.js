@@ -126,7 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         <strong>Saved:</strong> ${dateStr}
                     </div>
                     <div class="highlight-actions">
-                        <button class="action-btn summarize-btn" data-id="${item.id}">Summarize</button>
+                        ${item.summary ? 
+                            `<button class="action-btn summarize-btn" style="background: #e1e4e8; color: #6a737d; border-color: transparent; cursor: default;" disabled>Summarized</button>` : 
+                            `<button class="action-btn summarize-btn" data-id="${item.id}">Summarize</button>`
+                        }
                         <button class="action-btn delete-btn" data-id="${item.id}">Delete</button>
                     </div>
                     <div class="summary-box" style="display: ${item.summary ? 'block' : 'none'};">
