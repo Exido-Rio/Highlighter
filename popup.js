@@ -9,6 +9,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const changeKeyBtn = document.getElementById("change-key-btn");
     const clearAllBtn = document.getElementById("clear-all-btn");
 
+    // Custom Modals & Toasts
+    const toastContainer = document.getElementById("toast-container");
+    const toastMessage = document.getElementById("toast-message");
+    const modalOverlay = document.getElementById("custom-modal-overlay");
+    const modalCancelBtn = document.getElementById("modal-cancel-btn");
+    const modalConfirmBtn = document.getElementById("modal-confirm-btn");
+
+    let toastTimeout;
+    function showToast(message) {
+        toastMessage.textContent = message;
+        toastContainer.classList.remove("hidden");
+        // small timeout to allow display:block to apply before animating class
+        setTimeout(() => toastContainer.classList.add("show"), 10);
+        
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toastContainer.classList.remove("show");
+            setTimeout(() => toastContainer.classList.add("hidden"), 300);
+        }, 3000);
+    }
+
     function updateKeyUI(hasKey) {
         if (hasKey) {
             initialKeySection.style.display = "none";
@@ -48,13 +69,20 @@ document.addEventListener("DOMContentLoaded", () => {
         apiKeyInput.focus();
     });
 
-    // Clear All Highlights
+    // Clear All Highlights via Custom Modal
     clearAllBtn.addEventListener("click", () => {
-        if(confirm("Are you sure you want to delete all saved highlights?")) {
-            chrome.storage.local.set({ highlights: [] }, () => {
-                renderHighlights();
-            });
-        }
+        modalOverlay.classList.remove("hidden");
+    });
+
+    modalCancelBtn.addEventListener("click", () => {
+        modalOverlay.classList.add("hidden");
+    });
+
+    modalConfirmBtn.addEventListener("click", () => {
+        chrome.storage.local.set({ highlights: [] }, () => {
+            renderHighlights();
+            modalOverlay.classList.add("hidden");
+        });
     });
 
     // Helper function to escape HTML to prevent XSS attacks when displaying saved text
@@ -142,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chrome.storage.local.get(["highlights", "openaiApiKey"], async (result) => {
             const { highlights, openaiApiKey } = result;
             if (!openaiApiKey) {
-                alert("Please save your OpenAI API Key first.");
+                showToast("Please save your OpenAI API Key first.");
                 return;
             }
 
@@ -191,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             } catch (error) {
                 console.error("Summarize error", error);
-                alert("Failed to summarize: " + error.message);
+                showToast("API Error: " + error.message);
                 btn.textContent = "Summarize";
                 btn.disabled = false;
             }

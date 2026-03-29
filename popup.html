@@ -25,7 +25,23 @@
     <div id="highlights-list">
         <!-- Highlights will be injected here dynamically -->
     </div>
-    
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="custom-modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Delete All Highlights?</h3>
+            <p>This action cannot be undone. Are you sure?</p>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="action-btn">Cancel</button>
+                <button id="modal-confirm-btn" class="action-btn delete-btn">Delete All</button>
+            </div>
+        </div>
+    </div>
+
     <script src="popup.js"></script>
 </body>
 </html>
